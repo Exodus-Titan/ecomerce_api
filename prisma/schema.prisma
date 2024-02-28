@@ -12,3 +12,29 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+// models
+
+model User {
+  id           String @id @map("_id") @db.ObjectId //the ids will be created with the uuid library
+  email        String @unique
+  name         String
+  passwordHash String //the password will be hashed with bcrypt
+  role         String //admin (can create, update, delete and replace categories and products) or client (can only read categories and products)
+}
+
+model Category {
+  id          String    @id @map("_id") @db.ObjectId //the ids will be created with the uuid library
+  name        String
+  description String
+  products    Product[]
+}
+
+model Product {
+  id          String   @id @map("_id") @db.ObjectId //the ids will be created with the uuid library
+  name        String
+  description String
+  price       Float
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String   @db.ObjectId
+}
