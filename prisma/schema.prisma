@@ -16,11 +16,13 @@ datasource db {
 // models
 
 model User {
-  id           String @id @map("_id") @db.ObjectId //the ids will be created with the uuid library
-  email        String @unique
+  id           String   @id @map("_id") @db.ObjectId //the ids will be created with the uuid library
+  email        String   @unique
   name         String
   passwordHash String //the password will be hashed with bcrypt
   role         String //admin (can create, update, delete and replace categories and products) or client (can only read categories and products)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Category {
@@ -28,6 +30,8 @@ model Category {
   name        String
   description String
   products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Product {
@@ -37,4 +41,6 @@ model Product {
   price       Float
   category    Category @relation(fields: [categoryId], references: [id])
   categoryId  String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
