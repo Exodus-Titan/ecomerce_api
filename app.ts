@@ -1,6 +1,8 @@
 import express from "express";
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client'
+import { UserDto } from "./dto/userDto";
+import { createUserQuery } from "./prisma/queries/user queries/createUserQuery";
 
 const prisma = new PrismaClient()
 
@@ -12,6 +14,9 @@ async function main() {
   app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
   });
+
+  const user = new UserDto('juan@ol.com', 'juan','10', false);
+  console.log(await createUserQuery(user));
 }
 
 main()

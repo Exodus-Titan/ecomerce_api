@@ -16,17 +16,28 @@ datasource db {
 // models
 
 model User {
-  id           String   @id @map("_id") //the ids will be created with the uuid library
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId //the ids will be created with the uuid library
   email        String   @unique
   name         String
   passwordHash String //the password will be hashed with bcrypt
   role         Boolean //admin(True) (can create, update, delete and replace categories and products) or client(False) (can only read categories and products)
+  orders       Order[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
 
+model Order {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId //the ids will be created with the uuid library
+  total       Float
+  productsIds String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  User        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String?  @db.ObjectId
+}
+
 model Category {
-  id          String    @id @map("_id") //the ids will be created with the uuid library
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId //the ids will be created with the uuid library
   name        String    @unique
   description String
   products    Product[]
@@ -35,13 +46,13 @@ model Category {
 }
 
 model Product {
-  id          String   @id @map("_id") //the ids will be created with the uuid library
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId //the ids will be created with the uuid library
   name        String   @unique
   description String
   price       Float
   stock       Int
   category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId  String
+  categoryId  String   @db.ObjectId
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
