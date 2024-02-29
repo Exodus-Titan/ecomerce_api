@@ -27,7 +27,7 @@ model User {
 
 model Category {
   id          String    @id @map("_id") //the ids will be created with the uuid library
-  name        String
+  name        String    @unique
   description String
   products    Product[]
   createdAt   DateTime  @default(now())
@@ -39,7 +39,7 @@ model Product {
   name        String
   description String
   price       Float
-  category    Category @relation(fields: [categoryId], references: [id])
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId  String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
