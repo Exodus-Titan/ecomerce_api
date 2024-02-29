@@ -2,10 +2,10 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient()
 
-export async function updateProductPriceQuery(name: string, price: number) {
+export async function updateProductPriceQuery(id: string, price: number) {
   const updatedProduct = await prisma.product.update({
     where: {
-      name: name
+      id: id
     },
     data: {
       price: price
