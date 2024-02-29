@@ -10,7 +10,9 @@ export async function createProductQuery(ProductDto: ProductDto){
       description: ProductDto.description,
       price: ProductDto.price,
       stock: ProductDto.stock,
-      categoryId: ProductDto.categoryId
+      category:{
+        connect: {id: ProductDto.categoryId}
+      },
     }
   });
   return product;

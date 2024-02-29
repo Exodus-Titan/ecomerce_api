@@ -8,7 +8,7 @@ export async function updateProductsCategoryQuery(name: string, categoryId: stri
       name: name
     },
     data: {
-      categoryId: categoryId
+      category:{connect: {id: categoryId}}
     }
   });
   return updatedProduct;
