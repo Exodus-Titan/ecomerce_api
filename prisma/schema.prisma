@@ -36,9 +36,10 @@ model Category {
 
 model Product {
   id          String   @id @map("_id") //the ids will be created with the uuid library
-  name        String
+  name        String   @unique
   description String
   price       Float
+  stock       Int
   category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId  String
   createdAt   DateTime @default(now())
