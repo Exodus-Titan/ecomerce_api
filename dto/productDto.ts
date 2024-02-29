@@ -16,13 +16,13 @@ export class ProductDto{
   stock: number;
 
   @IsString()
-  categoryId: string;
+  categoryName: string;
 
-  constructor(name: string, description: string, price: number, stock: number, categoryId: string){
+  constructor(name: string, description: string, price: number, stock: number, categoryName: string){
     this.name = name;
     this.description = description;
     this.price = price;
     this.stock = stock;
-    this.categoryId = categoryId;
+    this.categoryName = categoryName;
   }
 }
