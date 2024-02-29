@@ -1,15 +1,26 @@
 import express from "express";
 import 'dotenv/config';
-import main from "./prisma/prismaConnection";
+import { PrismaClient } from '@prisma/client'
 
-const app = express();
+const prisma = new PrismaClient()
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
+async function main() {
+  const app = express();
+  app.get("/", (req, res) => {
+    res.send("Hello World");
+  });
+  app.listen(process.env.PORT, () => {
+    console.log(`Server is running on port ${process.env.PORT}`);
+  });
+}
 
-main();
+main()
+  .catch(async (e) => {
+    console.error(e)
+    process.exit(1)
+  })
+  .finally(async () => {
+    await prisma.$disconnect()
+  })
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
-});
+
