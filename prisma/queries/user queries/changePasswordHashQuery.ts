@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { removePassword } from "../common functions/excludePassword";
 
 const prisma = new PrismaClient()
 
@@ -11,5 +12,5 @@ export async function changePasswordHashQuery(id: string, passwordHash: string) 
       passwordHash: passwordHash
     }
   })
-  return user;
+  return removePassword(user);
 }
