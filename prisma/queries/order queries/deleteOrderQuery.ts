@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client";
-import { findOrderById } from "./findOrderByIdQuery";
+import { findOrderByIdQuery } from "./findOrderByIdQuery";
 
 const prisma = new PrismaClient()
 
 export async function deleteOrderQuery(id: string) {
-  const deletedOrder = findOrderById(id);
+  const deletedOrder = findOrderByIdQuery(id);
   await prisma.order.delete({
     where: {
       id: id
