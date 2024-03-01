@@ -1,15 +1,16 @@
-import { IsNumber, IsPositive, IsString } from "class-validator";
+import { IsArray, IsString } from "class-validator";
+import { OrderedProductDto } from "./orderedProductDto";
 
 export class OrderDto {
 
-  @IsString({each: true})
-  productsIds: string[];
+  @IsArray()
+  orderedProducts: OrderedProductDto[];
 
   @IsString()
   userId: string;
 
-  constructor( productsIds: string[], userId: string) {
-    this.productsIds = productsIds;
+  constructor( orderedProducts: OrderedProductDto[], userId: string) {
+    this.orderedProducts = orderedProducts;
     this.userId = userId;
   }
 
