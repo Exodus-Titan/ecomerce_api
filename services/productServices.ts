@@ -169,6 +169,7 @@ export class ProductServices{
         throw new Error('Product not found');
       }
     }catch(error){
+
       console.log(error);//enviar un mensaje con el error
     }
   }
