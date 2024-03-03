@@ -3,6 +3,7 @@ import { config } from "./config";
 import { PrismaClient } from '@prisma/client'
 import { routerApi } from "./routers";
 import { boomErrorHandler, errorHandler, logErrors } from "./middelware/errorHandler";
+import cors from "cors";
 
 
 const prisma = new PrismaClient()
@@ -10,6 +11,7 @@ const prisma = new PrismaClient()
 async function main() {
   const app = express();
   app.use(express.json());
+  app.use(cors());
   require('./auth/strategies');
   routerApi(app);
   app.use(logErrors);
