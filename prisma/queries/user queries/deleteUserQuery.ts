@@ -1,14 +1,19 @@
 import { PrismaClient } from "@prisma/client";
-import { findUserByEmailQuery } from "./findUserByEmailQuery";
+import Boom from '@hapi/boom';
+import { findUserByIdQuery } from "./findUserByIdQuery";
 
 const prisma = new PrismaClient()
 
-export async function deleteUserQuery(email: string) {
-  const deletedUser = await findUserByEmailQuery(email);
-  await prisma.user.delete({
-    where: {
-      email: email
-    }
-  });
-  return deletedUser;
+export async function deleteUserQuery(id: string) {
+  const deletedUser = await findUserByIdQuery(id);
+  try{
+    await prisma.user.delete({
+      where: {
+        id: id
+      }
+    });
+    return deletedUser;
+  }catch(error){
+    throw Boom.notFound('User not found');
+  }
 }

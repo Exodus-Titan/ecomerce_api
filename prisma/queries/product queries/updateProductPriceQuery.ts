@@ -1,8 +1,10 @@
 import { PrismaClient } from "@prisma/client";
+import Boom from '@hapi/boom';
 
 const prisma = new PrismaClient()
 
 export async function updateProductPriceQuery(id: string, price: number) {
+  try{
   const updatedProduct = await prisma.product.update({
     where: {
       id: id
@@ -12,4 +14,7 @@ export async function updateProductPriceQuery(id: string, price: number) {
     }
   });
   return updatedProduct;
+  } catch (error) {
+    throw Boom.notFound('Product not found');
+  }
 }

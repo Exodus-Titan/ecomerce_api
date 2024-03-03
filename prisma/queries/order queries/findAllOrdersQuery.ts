@@ -1,9 +1,14 @@
 import { PrismaClient } from "@prisma/client";
+import Boom from "@hapi/boom";
 
 const prisma = new PrismaClient()
 
 export async function findAllOrdersQuery() {
-  const orders = await prisma.order.findMany({
-  });
-  return orders;
+  try{
+    const orders = await prisma.order.findMany({
+    });
+    return orders;
+  }catch (error) {
+    throw Boom.notFound("Orders not found");
+  }
 }

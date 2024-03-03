@@ -1,12 +1,17 @@
 import { PrismaClient } from "@prisma/client";
+import Boom from '@hapi/boom';
 
 const prisma = new PrismaClient()
 
 export async function findProductByIdQuery(id: string) {
-  const product = await prisma.product.findUnique({
-    where: {
-      id: id
-    }
-  });
-  return product;
+  try{
+    const product = await prisma.product.findUnique({
+      where: {
+        id: id
+      }
+    });
+    return product;
+  } catch (error) {
+    throw Boom.notFound('Product not found');
+  }
 }

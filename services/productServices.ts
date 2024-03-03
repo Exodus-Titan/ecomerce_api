@@ -1,176 +1,138 @@
 import { ProductDto } from "../dto/productDto";
 import { validateData } from "../middelware/dtoValidationMiddleware";
+import Boom from '@hapi/boom';
+import { categoryExists } from "../services/validation Funtions/categoryExists";
 import { createProductQuery, deleteProductQuery, findAllProductsQuery, findProductByIdQuery, findProductByNameQuery, findProductsByCategoryQuery, findProductsInStockQuery, findProductsWithoutStockQuery, updateProductCategoryQuery, updateProductDescriptionQuery, updateProductNameQuery, updateProductPriceQuery, updateProductStockQuery } from "../prisma/queries/product queries/productQueriesIndex";
 
 export class ProductServices{
   async createProduct(productDto: ProductDto){
-    try{
-      const validationResult = await validateData<ProductDto>(ProductDto, productDto);
-      if (validationResult.isValid) {
+    const validationResult = await validateData<ProductDto>(ProductDto, productDto);
+    if (validationResult.isValid) {
+      if(await categoryExists(productDto.categoryId)){
         const product = validationResult.validatedData;
         const validProduct = await createProductQuery(product as ProductDto);
         return validProduct;
-      } else {
-        throw new Error(validationResult.errors?.[0]);
+      }else{
+        throw Boom.badData('Category does not exist');
       }
-    } catch (error) {
-      console.log(error);//enviar un mensaje con el error
+    } else {
+      throw Boom.badData(validationResult.errors?.[0]);
     }
   }
 
   async getProductById(id: string){
-    try{
-      const product = await findProductByIdQuery(id);
-      if (product) {
-        return product;
-      } else {
-        throw new Error('Product not found');
-      }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+    const product = await findProductByIdQuery(id);
+    if (product) {
+      return product;
+    } else {
+      throw Boom.notFound('Product not found');
     }
   }
 
   async getAllProducts(){
-    try{
-      const products = await findAllProductsQuery();
-      if (products) {
-        return products;
-      } else {
-        throw new Error('No products found');
-      }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+    const products = await findAllProductsQuery();
+    if (products) {
+      return products;
+    } else {
+      throw Boom.notFound('No products found');
     }
   }
 
   async getProductByCategory(category: string){
-    try{
+    if(await categoryExists(category)){
       const products = await findProductsByCategoryQuery(category);
       if (products) {
         return products;
       } else {
-        throw new Error('No products found');
+        throw Boom.notFound('No products found');
       }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+    }else{
+      throw Boom.notFound('Category does not exist');
     }
   }
 
   async getProductByName(name: string){
-    try{
-      const product = await findProductByNameQuery(name);
-      if (product) {
-        return product;
-      } else {
-        throw new Error('Product not found');
-      }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+    const product = await findProductByNameQuery(name);
+    if (product) {
+      return product;
+    } else {
+      throw Boom.notFound('Product not found');
     }
   }
 
   async findProductsInStock(){
-    try{
-      const products = await findProductsInStockQuery();
-      if (products) {
-        return products;
-      } else {
-        throw new Error('No products found');
-      }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+    const products = await findProductsInStockQuery();
+    if (products) {
+      return products;
+    } else {
+      throw Boom.notFound('No products found');
     }
   }
 
   async findProductsWithoutStock(){
-    try{
-      const products = await findProductsWithoutStockQuery();
-      if (products) {
-        return products;
-      } else {
-        throw new Error('No products found');
-      }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+    const products = await findProductsWithoutStockQuery();
+    if (products) {
+      return products;
+    } else {
+      throw Boom.notFound('No products found');
     }
   }
 
   async updateProductCategory(productId: string, categoryId: string){
-    try{
+    if(await categoryExists(categoryId)){
       const product = await updateProductCategoryQuery(productId, categoryId);
       if (product) {
         return product;
       } else {
-        throw new Error('Product not found');
-      }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+        throw Boom.notFound('Product not found');
+    }
+    }else{
+      throw Boom.notFound('Category does not exist');
     }
   }
 
   async updateProductDescription(productId: string, description: string){
-    try{
-      const product = await updateProductDescriptionQuery(productId, description);
-      if (product) {
-        return product;
-      } else {
-        throw new Error('Product not found');
-      }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+    const product = await updateProductDescriptionQuery(productId, description);
+    if (product) {
+      return product;
+    } else {
+      throw Boom.notFound('Product not found');
     }
   }
 
   async updateProductName(productId: string, name: string){
-    try{
-      const product = await updateProductNameQuery(productId, name);
-      if (product) {
-        return product;
-      } else {
-        throw new Error('Product not found');
-      }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+    const product = await updateProductNameQuery(productId, name);
+    if (product) {
+      return product;
+    } else {
+      throw Boom.notFound('Product not found');
     }
   }
 
   async updateProductPrice(productId: string, price: number){
-    try{
-      const product = await updateProductPriceQuery(productId, price);
-      if (product) {
-        return product;
-      } else {
-        throw new Error('Product not found');
-      }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+    const product = await updateProductPriceQuery(productId, price);
+    if (product) {
+      return product;
+    } else {
+      throw Boom.notFound('Product not found');
     }
   }
 
   async updateProductStock(productId: string, stock: number){
-    try{
-      const product = await updateProductStockQuery(productId, stock);
-      if (product) {
-        return product;
-      } else {
-        throw new Error('Product not found');
-      }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+    const product = await updateProductStockQuery(productId, stock);
+    if (product) {
+      return product;
+    } else {
+      throw Boom.notFound('Product not found');
     }
   }
 
   async deleteProduct(productId: string){
-    try{
-      const product = await deleteProductQuery(productId);
-      if (product) {
-      } else {
-        throw new Error('Product not found');
-      }
-    }catch(error){
-
-      console.log(error);//enviar un mensaje con el error
+    const product = await deleteProductQuery(productId);
+    if (product) {
+      return product;
+    } else {
+      throw Boom.notFound('Product not found');
     }
   }
 }

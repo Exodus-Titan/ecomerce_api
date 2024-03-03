@@ -1,14 +1,19 @@
 import { PrismaClient } from "@prisma/client";
-import { findCategoryByNameQuery } from "./findCategoryByNameQuery";
+import { findCategoryByIdQuery } from "./findCategoryByIdQuery";
+import Boom from "@hapi/boom";
 
 const prisma = new PrismaClient()
 
-export async function deleteCategoryQuery(name: string) {
-  const deletedCategory = await findCategoryByNameQuery(name);
-  await prisma.category.delete({
-    where: {
-      name: name
-    }
-  });
-  return deletedCategory;
+export async function deleteCategoryQuery(id: string) {
+  try{
+    const deletedCategory = await findCategoryByIdQuery(id);
+    await prisma.category.delete({
+      where: {
+        id: id
+      }
+    });
+    return deletedCategory;
+  }catch(error){
+    throw Boom.notFound('Category not found');
+  }
 }

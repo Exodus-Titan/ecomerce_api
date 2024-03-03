@@ -1,27 +1,91 @@
 import express from "express";
+import { OrderServices } from "../services/orderServices";
+import { OrderDto } from "../dto/orderDto";
+import passport from "passport";
+import { checkAdminRole, checkIdMatch } from "../middelware/authHandler";
 
+const orderServices = new OrderServices();
 export const ordersRouter = express.Router();
 
-ordersRouter.get("/orderId", (req, res) => {
-  //get order by id endpoint
+ordersRouter.get("/", passport.authenticate('jwt', {session: false}), checkAdminRole, async (req, res, next) => {
+  try{
+    const orders = await orderServices.getAllOrders();
+    res.send(orders);
+  }catch(error){
+    next(error)
+  }
 });
 
-ordersRouter.get("/", (req, res) => {
-  //get orders by user endpoint
+ordersRouter.get("/:userId/status", passport.authenticate('jwt', {session: false}), checkIdMatch, async (req, res, next) => {
+  try{
+    const userId = req.params.userId;
+    const status = req.body.status;
+    const orders = await orderServices.getUserOrdersByStatus(userId, status);
+    res.send(orders);
+  }catch(error){
+    next(error)
+  }
 });
 
-ordersRouter.get("/status", (req, res) => {
-  //get orders by status endpoint
+ordersRouter.post("/:userId/create_order", passport.authenticate('jwt', {session: false}), checkIdMatch, async (req, res, next) => {
+  try{
+    const orderDto = new OrderDto(req.body.orderedProducts, req.params.userId);
+    const order = await orderServices.createOrder(orderDto);
+    res.send(order);
+  }catch(error){
+    next(error)
+  }
 });
 
-ordersRouter.post("/create_order", (req, res) => {
-  //create order endpoint
+ordersRouter.patch("/:orderId/update_status", passport.authenticate('jwt', {session: false}), checkAdminRole, async (req, res, next) => {
+  try{
+    const orderId = req.params.orderId;
+    const status = req.body.status;
+    const order = await orderServices.updateOrderStatus(orderId, status);
+    res.send(order);
+  }catch(error){
+    next(error)
+  }
 });
 
-ordersRouter.patch("/:orderId/cancel", (req, res) => {
-  //cancel order endpoint
+ordersRouter.patch("/:orderId/cancel", passport.authenticate('jwt', {session: false}), async (req, res, next) => {
+  try{
+    const orderId = req.params.orderId;
+    const order = await orderServices.cancelOrder(orderId);
+    res.send(order);
+  }catch(error){
+    next(error)
+  }
 });
 
-ordersRouter.delete("/:orderId", (req, res) => {
-  //delete order endpoint
+
+ordersRouter.get("/:orderId", passport.authenticate('jwt', {session: false}), async (req, res, next) => {
+  try{
+    const orderId = req.params.orderId;
+    const order = await orderServices.getOrderById(orderId);
+    res.send(order);
+  }catch(error){
+    next(error)
+  }
 });
+
+ordersRouter.get("/:userId/orders", passport.authenticate('jwt', {session: false}), checkIdMatch, async (req, res, next) => {
+  try{
+    const userId = req.params.userId;
+    const orders = await orderServices.getAllUserOrders(userId);
+    res.send(orders);
+  }catch(error){
+    next(error)
+  }
+});
+
+/*
+ordersRouter.delete("/:orderId", async (req, res, next) => {
+  try{
+    const orderId = req.params.orderId;
+    const deletedOrder = await orderServices.deleteOrder(orderId);
+    res.send(deletedOrder);
+  }catch(error){
+    next(error)
+  }
+});*/

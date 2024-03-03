@@ -5,3 +5,4 @@ export * from './findAllUserOrdersQuery';
 export * from './findOrderByIdQuery';
 export * from './findUserOrdersByStatusQuery';
 export * from './updateOrderStatusQuery';
+export * from './cancelOrderQuery';

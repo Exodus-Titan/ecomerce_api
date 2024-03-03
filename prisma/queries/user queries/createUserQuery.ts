@@ -1,19 +1,28 @@
 import { PrismaClient } from '@prisma/client';
 import { UserDto } from '../../../dto/userDto';
-import { v1 as uuidv1 } from 'uuid';
-import { nanoid } from 'nanoid';
+import Boom from '@hapi/boom';
 import { removePassword } from '../common functions/excludePassword';
+import { findUserByEmailQuery } from './findUserByEmailQuery';
 
 const prisma = new PrismaClient();
 
 export async function createUserQuery(userDto: UserDto) {
-  const user = await prisma.user.create({
-    data: {
-      email: userDto.email,
-      name: userDto.name,
-      passwordHash: userDto.passwordHash,
-      role: userDto.role
+  try{
+    const uniqueCHeck = await findUserByEmailQuery(userDto.email);
+    if(!uniqueCHeck){
+      const user = await prisma.user.create({
+        data: {
+          email: userDto.email,
+          name: userDto.name,
+          passwordHash: userDto.passwordHash,
+          role: userDto.role
+        }
+      });
+      return removePassword(user);
+    }else{
+      throw Boom.badData('Email already in use');
     }
-  });
-  return removePassword(user);
+  }catch(error){
+    throw Boom.internal('Error creating user');
+  }
 };

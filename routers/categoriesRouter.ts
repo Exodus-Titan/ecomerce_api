@@ -1,31 +1,83 @@
 import express from "express";
+import { CategoryServices } from "../services/categoryServices";
+import { CategoryDto } from "../dto/categoryDto";
+import passport from "passport";
+import { checkAdminRole } from "../middelware/authHandler";
+
+const categoryService = new CategoryServices();
 
 export const categoriesRouter = express.Router();
 
-categoriesRouter.get("/", (req, res) => {
-  //get all categories endpoint
+
+categoriesRouter.get("/", async (req, res, next) => {
+  try{
+    const categories = await categoryService.getAllCategories();
+    res.send(categories);
+  }catch(error){
+    next(error)
+  }
 });
 
-categoriesRouter.get("/:categoryId", (req, res) => {
-  //get category by id endpoint
+categoriesRouter.post("/create_category",passport.authenticate('jwt', {session: false}), checkAdminRole, async (req, res, next) => {
+  try{
+    const categoryDto = new CategoryDto(req.body.name, req.body.description);
+    const category = await categoryService.createCategory(categoryDto);
+    res.send(category);
+  }catch(error){
+    next(error)
+  }
 });
 
-categoriesRouter.get("/:name", (req, res) => {
-  //get category by name endpoint
+
+categoriesRouter.get("/name", async (req, res, next) => {
+  try{
+    const name = req.body.name;
+    const category = await categoryService.getCategoryByName(name);
+    res.send(category);
+  }catch(error){
+    next(error)
+  }
 });
 
-categoriesRouter.post("/create_category", (req, res) => {
-  //create category endpoint
+
+categoriesRouter.patch("/:categoryId/change_name",passport.authenticate('jwt', {session: false}), checkAdminRole, async (req, res, next) => {
+  try{
+    const categoryId = req.params.categoryId;
+    const newName = req.body.name;
+    const category = await categoryService.updateCategoryName(categoryId, newName);
+    res.send(category);
+  }catch(error){
+    next(error)
+  }
 });
 
-categoriesRouter.patch("/:categoryId/change_name", (req, res) => {
-  //change name endpoint
+categoriesRouter.patch("/:categoryId/change_description",passport.authenticate('jwt', {session: false}), checkAdminRole, async (req, res, next) => {
+  try{
+    const categoryId = req.params.categoryId;
+    const newDescription = req.body.description;
+    const category = await categoryService.updateCategoryDescription(categoryId, newDescription);
+    res.send(category);
+  }catch(error){
+    next(error)
+  }
 });
 
-categoriesRouter.patch("/:categoryId/change_description", (req, res) => {
-  //change description endpoint
+categoriesRouter.delete("/:categoryId",passport.authenticate('jwt', {session: false}), checkAdminRole, async (req, res, next) => {
+  try{
+    const categoryId = req.params.categoryId;
+    const category = await categoryService.deleteCategory(categoryId);
+    res.send(category);
+  }catch(error){
+    next(error)
+  }
 });
 
-categoriesRouter.delete("/:categoryId", (req, res) => {
-  //delete category endpoint
+categoriesRouter.get("/:categoryId", async (req, res, next) => {
+  try{
+    const categoryId = req.params.categoryId;
+    const category = await categoryService.getCategoryById(categoryId);
+    res.send(category);
+  }catch(error){
+    next(error)
+  }
 });

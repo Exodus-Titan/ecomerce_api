@@ -1,99 +1,112 @@
 import { OrderDto } from "../dto/orderDto";
+import Boom from "@hapi/boom";
 import { validateData } from "../middelware/dtoValidationMiddleware";
-import { createOrderQuery, deleteOrderQuery, findAllOrdersQuery, findAllUserOrdersQuery, findOrderByIdQuery, findUserOrdersByStatusQuery, updateOrderStatusQuery } from "../prisma/queries/order queries/orderQueriesIndex";
+import { cancelOrderQuery, createOrderQuery, deleteOrderQuery, findAllOrdersQuery, findAllUserOrdersQuery, findOrderByIdQuery, findUserOrdersByStatusQuery, updateOrderStatusQuery } from "../prisma/queries/order queries/orderQueriesIndex";
+import { userExists } from "./validation Funtions/userExists";
+import { valdiateStatus } from "./validation Funtions/validateOrderStatus";
 
-export class OrderServices{
+  export class OrderServices{
 
   async createOrder(orderDto: OrderDto){
-    try{
-      const validationResult = await validateData<OrderDto>(OrderDto, orderDto);
-      if (validationResult.isValid) {
+    const validationResult = await validateData<OrderDto>(OrderDto, orderDto);
+    if (validationResult.isValid) {
+      if(await userExists(orderDto.userId)){
         const order = validationResult.validatedData;
         const validOrder = await createOrderQuery(order as OrderDto);
         return validOrder;
-      } else {
-        throw new Error(validationResult.errors?.[0]);
+      }else{
+        throw Boom.badData('User does not exist');
       }
-    } catch (error) {
-      console.log(error);//enviar un mensaje con el error
+    } else {
+      throw Boom.badData(validationResult.errors?.[0]);
     }
   }
 
   async getOrderById(id: string){
-    try{
-      const order = await findOrderByIdQuery(id);
-      if (order) {
-        return order;
-      } else {
-        throw new Error('Order not found');
-      }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+    const order = await findOrderByIdQuery(id);
+    if (order) {
+      return order;
+    } else {
+      throw Boom.notFound('Order not found');
     }
   }
 
   async getAllOrders(){
-    try{
-      const orders = await findAllOrdersQuery();
-      if (orders) {
-        return orders;
-      } else {
-        throw new Error('No orders found');
-      }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+    const orders = await findAllOrdersQuery();
+    if (orders) {
+      return orders;
+    } else {
+      throw Boom.notFound("Orders not found");
     }
   }
+
   async getAllUserOrders(userId: string){
-    try{
+    if(await userExists(userId)){
       const orders = await findAllUserOrdersQuery(userId);
       if (orders) {
         return orders;
       } else {
-        throw new Error('No orders found');
+        throw Boom.notFound('Order not found');
       }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+    }else{
+      throw Boom.notFound('User does not exist');
     }
   }
 
   async getUserOrdersByStatus(userId: string, status: string){
-    try{
-      const orders = await findUserOrdersByStatusQuery(userId, status);
-      if (orders) {
-        return orders;
-      } else {
-        throw new Error('No orders found');
+    if(valdiateStatus(status)){
+      if(await userExists(userId)){
+        const orders = await findUserOrdersByStatusQuery(userId, status);
+        if (orders) {
+          return orders;
+        } else {
+            throw Boom.notFound("Orders not found");
+        }
+      }else{
+        throw Boom.notFound('User does not exist');
       }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+    }else{
+      throw Boom.badData('Invalid status');
     }
   }
 
   async updateOrderStatus(id: string, status: string){
-    try{
-      const order = await updateOrderStatusQuery(id, status);
-      if (order) {
-        return order;
-      } else {
-        throw new Error('Order not found');
+    if(status === "cancelled"){
+      return this.cancelOrder(id);
+    }else{
+      if(valdiateStatus(status)){
+        const order = await findOrderByIdQuery(id);
+        if (order) {
+          if(order.status === 'cancelled'){
+            throw Boom.badRequest('Order cancelled, cannot update status');
+          }else{
+            return await updateOrderStatusQuery(id, status);
+          }
+        } else {
+          throw Boom.notFound('Order not found');
+        }
+      }else{
+        throw Boom.badData('Invalid status');
       }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
     }
+  }
+
+  async cancelOrder(id: string){
+   const order = await cancelOrderQuery(id);
+    if (order) {
+      return order;
+    } else {
+      throw Boom.notFound('Order not found');
+  }
   }
 
   async deleteOrder(id: string){
-    try{
-      const order = await deleteOrderQuery(id);
-      if (order) {
-        return order;
-      } else {
-        throw new Error('Order not found');
-      }
-    }catch(error){
-      console.log(error);//enviar un mensaje con el error
+    const order = await deleteOrderQuery(id);
+    if (order) {
+      return order;
+    } else {
+      throw Boom.notFound('Order not found');
     }
   }
 
-}
+  }

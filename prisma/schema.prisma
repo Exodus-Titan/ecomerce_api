@@ -30,7 +30,7 @@ model Order {
   id        String           @id @default(auto()) @map("_id") @db.ObjectId //the ids will be created with the uuid library
   total     Float
   products  OrederdProduct[]
-  status    String //pending, paid, delivered, canceled
+  status    String //pending, paid, delivered, cancelled
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
   User      User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
