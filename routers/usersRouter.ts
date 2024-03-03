@@ -3,6 +3,7 @@ import { UserServices } from "../services/userServices";
 import bcrypt from "bcrypt";
 import passport from "passport";
 import { checkAdminRole, checkIdMatch } from "../middelware/authHandler";
+import { dataPagination } from "../middelware/pagination";
 
 const userService = new UserServices();
 
@@ -12,7 +13,12 @@ export const usersRouter = express.Router();
 usersRouter.get("/all_users", passport.authenticate('jwt', {session: false}), checkAdminRole, async (req, res, next) => {
   try{
     const users = await userService.getAllUsers();
-    res.send(users);
+    if(!req.query.page || !req.query.pageSize){
+      res.send(users);
+      }else{
+        const paginatedUsers = dataPagination(req.query.page as string, req.query.pageSize as string, users)
+        res.send(paginatedUsers);
+      }
   }catch(error){
     next(error)
   }
@@ -30,7 +36,6 @@ usersRouter.get("/email", passport.authenticate('jwt', {session: false}), checkA
 
 usersRouter.get("/roles", passport.authenticate('jwt', {session: false}), checkAdminRole, async (req, res, next) => {
   try{
-    console.log('sip');
     let role = false;
     if (req.body.role === 'admin') {
       role = true;
@@ -39,7 +44,12 @@ usersRouter.get("/roles", passport.authenticate('jwt', {session: false}), checkA
       role = false;
     }
     const users = await userService.getUsersByRole(role);
-    res.send(users);
+    if(!req.query.page || !req.query.pageSize){
+      res.send(users);
+      }else{
+        const paginatedUsers = dataPagination(req.query.page as string, req.query.pageSize as string, users)
+        res.send(paginatedUsers);
+      }
   }catch(error){
     next(error);
   }

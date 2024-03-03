@@ -2,13 +2,11 @@ import express from "express";
 import { UserServices } from "../services/userServices";
 import { UserDto } from "../dto/userDto";
 import bycrypt from "bcrypt";
-import { OrderServices } from "../services/orderServices";
 import passport from "passport";
 import { checkAdminRole } from "../middelware/authHandler";
 
 
 const userService = new UserServices();
-const orderService = new OrderServices();
 
 export const adminRouter = express.Router();
 

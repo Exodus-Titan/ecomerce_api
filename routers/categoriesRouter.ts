@@ -3,6 +3,7 @@ import { CategoryServices } from "../services/categoryServices";
 import { CategoryDto } from "../dto/categoryDto";
 import passport from "passport";
 import { checkAdminRole } from "../middelware/authHandler";
+import { dataPagination } from "../middelware/pagination";
 
 const categoryService = new CategoryServices();
 
@@ -12,7 +13,12 @@ export const categoriesRouter = express.Router();
 categoriesRouter.get("/", async (req, res, next) => {
   try{
     const categories = await categoryService.getAllCategories();
-    res.send(categories);
+    if(!req.query.page || !req.query.pageSize){
+      res.send(categories);
+      }else{
+        const paginatedCategories = dataPagination(req.query.page as string, req.query.pageSize as string, categories)
+        res.send(paginatedCategories);
+      }
   }catch(error){
     next(error)
   }

@@ -3,6 +3,7 @@ import Boom from '@hapi/boom';
 import { ProductServices } from "../services/productServices";
 import { ProductDto } from "../dto/productDto";
 import passport from "passport";
+import { dataPagination } from "../middelware/pagination";
 
 const productsService = new ProductServices();
 
@@ -12,7 +13,12 @@ export const productsRouter = express.Router();
 productsRouter.get("/", async (req, res, next) => {
     try{
       const products = await productsService.getAllProducts();
-      res.send(products);
+      if(!req.query.page || !req.query.pageSize){
+        res.send(products);
+      }else{
+        const paginatedProducts = dataPagination(req.query.page as string, req.query.pageSize as string, products)
+        res.send(paginatedProducts);
+      }
     }catch(error){
       next(error);
     }
@@ -33,7 +39,12 @@ productsRouter.get("/category/:categoryId", async (req, res, next) => {
   try{
     const categoryId = req.params.categoryId;
     const products = await productsService.getProductByCategory(categoryId);
-    res.send(products);
+    if(!req.query.page || !req.query.pageSize){
+      res.send(products);
+    }else{
+      const paginatedProducts = dataPagination(req.query.page as string, req.query.pageSize as string, products)
+      res.send(paginatedProducts);
+    }
   }catch(error){
     next(error);
   }
@@ -42,7 +53,12 @@ productsRouter.get("/category/:categoryId", async (req, res, next) => {
 productsRouter.get("/inventory", async (req, res, next) => {
   try{
     const products = await productsService.findProductsInStock();
+    if(!req.query.page || !req.query.pageSize){
     res.send(products);
+    }else{
+      const paginatedProducts = dataPagination(req.query.page as string, req.query.pageSize as string, products)
+      res.send(paginatedProducts);
+    }
   }catch(error){
     next(error);
   }
@@ -51,7 +67,12 @@ productsRouter.get("/inventory", async (req, res, next) => {
 productsRouter.get("/out_of_stock", async (req, res, next) => {
   try{
     const products = await productsService.findProductsWithoutStock();
-    res.send(products);
+    if(!req.query.page || !req.query.pageSize){
+      res.send(products);
+      }else{
+        const paginatedProducts = dataPagination(req.query.page as string, req.query.pageSize as string, products)
+        res.send(paginatedProducts);
+      }
   }catch(error){
     next(error);
   }

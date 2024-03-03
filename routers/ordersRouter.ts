@@ -3,6 +3,7 @@ import { OrderServices } from "../services/orderServices";
 import { OrderDto } from "../dto/orderDto";
 import passport from "passport";
 import { checkAdminRole, checkIdMatch } from "../middelware/authHandler";
+import { dataPagination } from "../middelware/pagination";
 
 const orderServices = new OrderServices();
 export const ordersRouter = express.Router();
@@ -10,7 +11,12 @@ export const ordersRouter = express.Router();
 ordersRouter.get("/", passport.authenticate('jwt', {session: false}), checkAdminRole, async (req, res, next) => {
   try{
     const orders = await orderServices.getAllOrders();
-    res.send(orders);
+    if(!req.query.page || !req.query.pageSize){
+      res.send(orders);
+      }else{
+        const paginatedOrders = dataPagination(req.query.page as string, req.query.pageSize as string, orders)
+        res.send(paginatedOrders);
+      }
   }catch(error){
     next(error)
   }
@@ -21,7 +27,12 @@ ordersRouter.get("/:userId/status", passport.authenticate('jwt', {session: false
     const userId = req.params.userId;
     const status = req.body.status;
     const orders = await orderServices.getUserOrdersByStatus(userId, status);
-    res.send(orders);
+    if(!req.query.page || !req.query.pageSize){
+      res.send(orders);
+      }else{
+        const paginatedOrders = dataPagination(req.query.page as string, req.query.pageSize as string, orders)
+        res.send(paginatedOrders);
+      }
   }catch(error){
     next(error)
   }
@@ -73,7 +84,12 @@ ordersRouter.get("/:userId/orders", passport.authenticate('jwt', {session: false
   try{
     const userId = req.params.userId;
     const orders = await orderServices.getAllUserOrders(userId);
-    res.send(orders);
+    if(!req.query.page || !req.query.pageSize){
+      res.send(orders);
+      }else{
+        const paginatedOrders = dataPagination(req.query.page as string, req.query.pageSize as string, orders)
+        res.send(paginatedOrders);
+      }
   }catch(error){
     next(error)
   }
