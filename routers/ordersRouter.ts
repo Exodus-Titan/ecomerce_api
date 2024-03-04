@@ -59,7 +59,17 @@ ordersRouter.patch("/:orderId/update_status", passport.authenticate('jwt', {sess
   }
 });
 
-ordersRouter.patch("/:orderId/cancel", passport.authenticate('jwt', {session: false}), async (req, res, next) => {
+ordersRouter.patch("/:orderId/user_cancel", passport.authenticate('jwt', {session: false}), checkIdMatch,async (req, res, next) => {
+  try{
+    const orderId = req.params.orderId;
+    const order = await orderServices.cancelOrder(orderId);
+    res.send(order);
+  }catch(error){
+    next(error)
+  }
+});
+
+ordersRouter.patch("/:orderId/admin_cancel", passport.authenticate('jwt', {session: false}), checkAdminRole,async (req, res, next) => {
   try{
     const orderId = req.params.orderId;
     const order = await orderServices.cancelOrder(orderId);
