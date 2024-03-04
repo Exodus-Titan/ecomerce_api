@@ -13,7 +13,7 @@ export async function findUserByIdQuery(id: string) {
         id: true,
         email: true,
         name: true,
-        role: true
+        isAdmin: true
       }
     });
   return user;

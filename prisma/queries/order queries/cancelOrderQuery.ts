@@ -8,8 +8,8 @@ export async function cancelOrderQuery(orderId: string) {
   try{
     const order = await findOrderByIdQuery(orderId);
     if(order){
-        if(order?.status !== "cancelled"){
-        await prisma.order.update({
+      if(order.status !== "cancelled"){
+        const cancelledOrder = await prisma.order.update({
           where: {
             id: orderId
           },
@@ -27,13 +27,12 @@ export async function cancelOrderQuery(orderId: string) {
                 increment: order.products[i].quantity
               }
             }
-
           });
         }
+        return cancelledOrder;
       }else{
         throw Boom.badRequest("Order already cancelled");
       }
-      return order;
     }else{
       throw Boom.notFound("Order not found");
     }

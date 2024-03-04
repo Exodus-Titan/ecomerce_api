@@ -3,17 +3,17 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient()
 
-export async function findUsersByRoleQuery(role: boolean) {
+export async function findUsersByRoleQuery(isAdmin: boolean) {
   try{
     return await prisma.user.findMany({
       where: {
-        role: role
+        isAdmin: isAdmin
       },
       select:{
         id: true,
         email: true,
         name: true,
-        role: true
+        isAdmin: true
       }
   });}catch(error){
     throw Boom.notFound('No users found');

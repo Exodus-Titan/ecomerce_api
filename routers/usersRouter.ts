@@ -36,14 +36,14 @@ usersRouter.get("/email", passport.authenticate('jwt', {session: false}), checkA
 
 usersRouter.get("/roles", passport.authenticate('jwt', {session: false}), checkAdminRole, async (req, res, next) => {
   try{
-    let role = false;
+    let isAdmin = false;
     if (req.body.role === 'admin') {
-      role = true;
+      isAdmin = true;
     }
     else{
-      role = false;
+      isAdmin = false;
     }
-    const users = await userService.getUsersByRole(role);
+    const users = await userService.getUsersByRole(isAdmin);
     if(!req.query.page || !req.query.pageSize){
       res.send(users);
       }else{
@@ -71,8 +71,7 @@ usersRouter.patch("/:userId/change_password", passport.authenticate('jwt',  {ses
   try{
     const userId = req.params.userId;
     const newPassword = req.body.password;
-    const newHash = await bcrypt.hash(newPassword, 10);
-    const user = await userService.updatePasswordHash(userId, newHash);
+    const user = await userService.updatePasswordHash(userId, newPassword);
     res.send(user);
   }catch(error){
     next(error);
@@ -84,6 +83,17 @@ usersRouter.patch("/:userId/change_name", passport.authenticate('jwt',  {session
     const userId = req.params.userId;
     const newName = req.body.name;
     const user = await userService.updateUserName(userId, newName);
+    res.send(user);
+  }catch(error){
+    next(error);
+  }
+});
+
+
+usersRouter.delete("/:userId/admin_delete", passport.authenticate('jwt', {session: false}), checkAdminRole, async (req, res, next) => {
+  try{
+    const userId = req.params.userId;
+    const user = await userService.deleteUser(userId);
     res.send(user);
   }catch(error){
     next(error);

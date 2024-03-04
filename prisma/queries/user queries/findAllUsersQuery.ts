@@ -11,7 +11,7 @@ export async function findAllUsersQuery() {
         id: true,
         email: true,
         name: true,
-        role: true
+        isAdmin: true
       }
     });
   }catch(error){

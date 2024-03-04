@@ -9,6 +9,6 @@ export async function findAllOrdersQuery() {
     });
     return orders;
   }catch (error) {
-    throw Boom.notFound("Orders not found");
+    throw Boom.notFound("No orders found");
   }
 }

@@ -19,17 +19,3 @@ export const validateData = async <T>(dto: any, data: T): Promise<ValidationResu
   return { isValid: true, validatedData: object as T };
 };
 
-
-/* Example usage:
-
-const user = new UserDto('John@email.com', 'Doe', '12', false);
-  const validationResult = await validateData<UserDto>(UserDto, user);
-
-if (validationResult.isValid) {
-    const user = validationResult.validatedData;
-    // Proceed with user creation logic
-    console.log('User data is valid:', user);
-} else {
-    console.error('Validation failed. Errors:', validationResult.errors);
-}
-*/

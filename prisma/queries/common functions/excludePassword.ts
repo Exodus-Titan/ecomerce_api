@@ -4,16 +4,16 @@ class userWithoutPassword {
   id: string;
   email: string;
   name: string;
-  role: boolean;
+  isAdmin: boolean;
 
-  constructor(id: string, email: string, name: string, role: boolean) {
+  constructor(id: string, email: string, name: string, isAdmin: boolean) {
     this.id = id;
     this.email = email;
     this.name = name;
-    this.role = role;
+    this.isAdmin = isAdmin;
   }
 }
 
 export function removePassword(user: User) {
-  return new userWithoutPassword(user.id, user.email, user.name, user.role);
+  return new userWithoutPassword(user.id, user.email, user.name, user.isAdmin);
 }

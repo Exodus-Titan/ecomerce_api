@@ -13,7 +13,7 @@ export async function findUserByEmailQuery(email: string) {
         id: true,
         email: true,
         name: true,
-        role: true
+        isAdmin: true
       }
     });
   }catch(error){

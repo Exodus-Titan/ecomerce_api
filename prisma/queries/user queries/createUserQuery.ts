@@ -15,7 +15,7 @@ export async function createUserQuery(userDto: UserDto) {
           email: userDto.email,
           name: userDto.name,
           passwordHash: userDto.passwordHash,
-          role: userDto.role
+          isAdmin: userDto.isAdmin
         }
       });
       return removePassword(user);

@@ -1,9 +1,14 @@
-import { IsString } from "class-validator";
+import { IsString, IsNotEmpty } from "class-validator";
+import { IsNotBlank } from "./dtoValidator/isNotBlankValidator";
 
 export class CategoryDto{
   @IsString()
+  @IsNotBlank()
+  @IsNotEmpty()
   name: string;
 
+  @IsNotBlank()
+  @IsNotEmpty()
   @IsString()
   description: string;
 

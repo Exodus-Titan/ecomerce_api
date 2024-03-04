@@ -15,7 +15,7 @@ authRouter.get("/login", passport.authenticate('local', {session:false}) , async
       if(!req.user)
         throw new Error("User not found");
       const user = removePassword(req.user as User);
-      const token = signToken(user.id, user.role);
+      const token = signToken(user.id, user.isAdmin);
       res.send({
         user,
         token
