@@ -14,7 +14,6 @@ async function main() {
   app.use(cors());
   require('./auth/strategies');
   routerApi(app);
-  app.use(logErrors);
   app.use(boomErrorHandler);
   app.use(errorHandler);
 

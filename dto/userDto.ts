@@ -19,7 +19,7 @@ export class UserDto{
 
 
   @IsBoolean()
-  isAdmin : boolean;
+  isAdmin: boolean;
 
   constructor(email: string, name: string, passwordHash: string, isAdmin: boolean){
     this.email = email;
