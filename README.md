@@ -1031,6 +1031,13 @@ Una vez esté en la carpeta del proyecto podrá usar el comando
 
 Para poder instalar todas las dependencias del proyecto
 
+Si no se esta usando una base de datos con los esquemas ya cargados, debe usar los siguientes comandos 
+
+```bash
+  npx prisma db push
+  npx prisma generate
+```
+
 Para correr el servidor en modo desarrollo podra usar el comando 
 
 ```bash
