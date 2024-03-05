@@ -2,7 +2,7 @@ import express from "express";
 import { config } from "./config";
 import { PrismaClient } from '@prisma/client'
 import { routerApi } from "./routers";
-import { boomErrorHandler, errorHandler, logErrors } from "./middelware/errorHandler";
+import { boomErrorHandler, errorHandler } from "./middelware/errorHandler";
 import cors from "cors";
 
 
