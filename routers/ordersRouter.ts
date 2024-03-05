@@ -59,9 +59,9 @@ ordersRouter.patch("/:orderId/update_status", passport.authenticate('jwt', {sess
   }
 });
 
-ordersRouter.patch("/:orderId/user_cancel", passport.authenticate('jwt', {session: false}), checkIdMatch,async (req, res, next) => {
+ordersRouter.patch("/:userId/user_cancel", passport.authenticate('jwt', {session: false}), checkIdMatch,async (req, res, next) => {
   try{
-    const orderId = req.params.orderId;
+    const orderId = req.body.orderId;
     const order = await orderServices.cancelOrder(orderId);
     res.send(order);
   }catch(error){
