@@ -16,7 +16,7 @@ datasource db {
 // models
 
 model User {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId //the ids will be created with the uuid library
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
   email        String   @unique
   name         String
   passwordHash String //the password will be hashed with bcrypt
@@ -27,7 +27,7 @@ model User {
 }
 
 model Order {
-  id        String           @id @default(auto()) @map("_id") @db.ObjectId //the ids will be created with the uuid library
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
   total     Float
   products  OrederdProduct[]
   status    String //pending, paid, delivered, cancelled
@@ -43,7 +43,7 @@ type OrederdProduct {
 }
 
 model Category {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId //the ids will be created with the uuid library
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   name        String    @unique
   description String
   products    Product[]
@@ -52,7 +52,7 @@ model Category {
 }
 
 model Product {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId //the ids will be created with the uuid library
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String   @unique
   description String
   price       Float
