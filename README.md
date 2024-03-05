@@ -1002,3 +1002,37 @@ Crea un usuario con el rol de "admin" y retorna los datos del usuario sin el atr
 
 ![](https://i.ibb.co/Kz2KJTS/image.png)
 
+
+## Instalación
+
+Para poder ejecutar el proyecto se debe tener instalada la una versión de Nodejs >= a Nodejs 20.9.0 y la versión de npm >= a npm 10.4.0 
+
+Para comprobar la versión de estos se pueden usar los siguientes comandos en consola 
+
+```bash
+  node --version
+  npm --version
+```
+También debe tener instalado el CLI de Git en su maquina
+
+Luego de comprobar las versiones deberá clonar el repositorio
+
+ ```bash
+  git clone https://github.com/Exodus-Titan/ecomerce_api.git
+```
+
+Para poder correr el proyecto deberá crear el archivo con las variables de entorno
+
+Una vez esté en la carpeta del proyecto podrá usar el comando 
+
+```bash
+  npm install
+```
+
+Para poder instalar todas las dependencias del proyecto
+
+Para correr el servidor en modo desarrollo podra usar el comando 
+
+```bash
+  npm run dev
+```
